@@ -1,12 +1,12 @@
 ## utils 
 
+**golang sdk 版本必须大于1.9**
+
 获取方式
 
 ```go
 go get github.com/hzwy23/utils
 ```
-
-** golang sdk 版本必须大于1.9 **
 
 ## 简介
 
