@@ -9,18 +9,19 @@ import (
 	"strconv"
 )
 
-func ParseJSON(r *http.Request, rst interface{}) error {
+// 解析用户提交的请求
+func ParseForm(r *http.Request, rst interface{}, jsonName ...string) error {
 	r.ParseForm()
-	js := r.FormValue("JSON")
-	if len(js) == 0 {
-		return errors.New("empty")
-	}
-	err := json.Unmarshal([]byte(js), rst)
-	return err
-}
 
-func ParseForm(r *http.Request, rst interface{}) error {
-	r.ParseForm()
+	if len(jsonName) != 0 {
+		// 解析json数据，json名字必须是可变参数的第一个
+		js := r.FormValue(jsonName[0])
+		if len(js) == 0 {
+			return errors.New("empty")
+		}
+		err := json.Unmarshal([]byte(js), rst)
+		return err
+	}
 
 	obj := reflect.ValueOf(rst)
 	if obj.Kind() != reflect.Ptr {

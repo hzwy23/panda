@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func DataInterval(start string, end string) int {
@@ -416,4 +417,12 @@ func DateFormat(str string, model string) (string, error) {
 		return strings.Replace(rst, "T", " ", 1), nil
 	}
 	return str, errors.New("model is unsupported.")
+}
+
+func GetCurrentTime() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+func GetCurrentyDate() string {
+	return time.Now().Format("2006-01-02")
 }
