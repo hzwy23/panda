@@ -6,6 +6,8 @@
 go get github.com/hzwy23/utils
 ```
 
+** golang sdk 版本必须大于1.9 **
+
 ## 简介
 
 这是一个自己收集的常用工具包, 目前在[asofdate项目](https://github.com/hzwy23/asofdate)中使用.
