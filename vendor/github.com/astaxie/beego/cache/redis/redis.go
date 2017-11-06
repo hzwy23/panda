@@ -137,7 +137,7 @@ func (rc *Cache) IsExist(key string) bool {
 	if err != nil {
 		return false
 	}
-	if !v {
+	if v == false {
 		if _, err = rc.do("HDEL", rc.key, key); err != nil {
 			return false
 		}

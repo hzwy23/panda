@@ -150,7 +150,7 @@ func (d *commandSyncDb) Run() error {
 			}
 
 			for _, fi := range mi.fields.fieldsDB {
-				if _, ok := columns[fi.column]; !ok {
+				if _, ok := columns[fi.column]; ok == false {
 					fields = append(fields, fi)
 				}
 			}
@@ -175,7 +175,7 @@ func (d *commandSyncDb) Run() error {
 			}
 
 			for _, idx := range indexes[mi.table] {
-				if !d.al.DbBaser.IndexExists(db, idx.Table, idx.Name) {
+				if d.al.DbBaser.IndexExists(db, idx.Table, idx.Name) == false {
 					if !d.noInfo {
 						fmt.Printf("create index `%s` for table `%s`\n", idx.Name, idx.Table)
 					}

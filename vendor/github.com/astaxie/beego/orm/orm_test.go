@@ -93,14 +93,14 @@ wrongArg:
 }
 
 func AssertIs(a interface{}, args ...interface{}) error {
-	if ok, err := ValuesCompare(true, a, args...); !ok {
+	if ok, err := ValuesCompare(true, a, args...); ok == false {
 		return err
 	}
 	return nil
 }
 
 func AssertNot(a interface{}, args ...interface{}) error {
-	if ok, err := ValuesCompare(false, a, args...); !ok {
+	if ok, err := ValuesCompare(false, a, args...); ok == false {
 		return err
 	}
 	return nil

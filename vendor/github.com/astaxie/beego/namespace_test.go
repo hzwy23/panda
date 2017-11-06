@@ -139,7 +139,10 @@ func TestNamespaceCond(t *testing.T) {
 
 	ns := NewNamespace("/v2")
 	ns.Cond(func(ctx *context.Context) bool {
-		return ctx.Input.Domain() == "beego.me"
+		if ctx.Input.Domain() == "beego.me" {
+			return true
+		}
+		return false
 	}).
 		AutoRouter(&TestController{})
 	AddNamespace(ns)

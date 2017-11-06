@@ -128,7 +128,7 @@ func (rp *Provider) SessionInit(maxlifetime int64, savePath string) error {
 	}
 	if len(configs) > 1 {
 		poolsize, err := strconv.Atoi(configs[1])
-		if err != nil || poolsize < 0 {
+		if err != nil || poolsize <= 0 {
 			rp.poolsize = MaxPoolSize
 		} else {
 			rp.poolsize = poolsize
@@ -155,7 +155,7 @@ func (rp *Provider) SessionInit(maxlifetime int64, savePath string) error {
 			return nil, err
 		}
 		if rp.password != "" {
-			if _, err = c.Do("AUTH", rp.password); err != nil {
+			if _, err := c.Do("AUTH", rp.password); err != nil {
 				c.Close()
 				return nil, err
 			}
@@ -176,20 +176,13 @@ func (rp *Provider) SessionRead(sid string) (session.Store, error) {
 	c := rp.poollist.Get()
 	defer c.Close()
 
-	var (
-		kv  map[interface{}]interface{}
-		kvs string
-		err error
-	)
-
-	if kvs, err = redis.String(c.Do("GET", sid)); err != nil {
-		return nil, err
-	}
-
+	kvs, err := redis.String(c.Do("GET", sid))
+	var kv map[interface{}]interface{}
 	if len(kvs) == 0 {
 		kv = make(map[interface{}]interface{})
 	} else {
-		if kv, err = session.DecodeGob([]byte(kvs)); err != nil {
+		kv, err = session.DecodeGob([]byte(kvs))
+		if err != nil {
 			return nil, err
 		}
 	}
@@ -223,7 +216,20 @@ func (rp *Provider) SessionRegenerate(oldsid, sid string) (session.Store, error)
 		c.Do("RENAME", oldsid, sid)
 		c.Do("EXPIRE", sid, rp.maxlifetime)
 	}
-	return rp.SessionRead(sid)
+
+	kvs, err := redis.String(c.Do("GET", sid))
+	var kv map[interface{}]interface{}
+	if len(kvs) == 0 {
+		kv = make(map[interface{}]interface{})
+	} else {
+		kv, err = session.DecodeGob([]byte(kvs))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	rs := &SessionStore{p: rp.poollist, sid: sid, values: kv, maxlifetime: rp.maxlifetime}
+	return rs, nil
 }
 
 // SessionDestroy delete redis session by id
@@ -237,6 +243,7 @@ func (rp *Provider) SessionDestroy(sid string) error {
 
 // SessionGC Impelment method, no used.
 func (rp *Provider) SessionGC() {
+	return
 }
 
 // SessionAll return all activeSession

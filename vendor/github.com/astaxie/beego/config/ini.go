@@ -21,7 +21,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -185,17 +184,10 @@ func (ini *IniConfig) parseData(dir string, data []byte) (*IniConfigContainer, e
 
 // ParseData parse ini the data
 // When include other.conf,other.conf is either absolute directory
-// or under beego in default temporary directory(/tmp/beego[-username]).
+// or under beego in default temporary directory(/tmp/beego).
 func (ini *IniConfig) ParseData(data []byte) (Configer, error) {
-	dir := "beego"
-	currentUser, err := user.Current()
-	if err == nil {
-		dir = "beego-" + currentUser.Username
-	}
-	dir = filepath.Join(os.TempDir(), dir)
-	if err = os.MkdirAll(dir, os.ModePerm); err != nil {
-		return nil, err
-	}
+	dir := filepath.Join(os.TempDir(), "beego")
+	os.MkdirAll(dir, os.ModePerm)
 
 	return ini.parseData(dir, data)
 }
@@ -405,8 +397,11 @@ func (c *IniConfigContainer) SaveConfigFile(filename string) (err error) {
 			}
 		}
 	}
-	_, err = buf.WriteTo(f)
-	return err
+
+	if _, err = buf.WriteTo(f); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Set writes a new value for key.
@@ -421,7 +416,7 @@ func (c *IniConfigContainer) Set(key, value string) error {
 
 	var (
 		section, k string
-		sectionKey = strings.Split(strings.ToLower(key), "::")
+		sectionKey = strings.Split(key, "::")
 	)
 
 	if len(sectionKey) >= 2 {

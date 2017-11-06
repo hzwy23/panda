@@ -205,7 +205,11 @@ func (rp *MemProvider) SessionDestroy(sid string) error {
 		}
 	}
 
-	return client.Delete(sid)
+	err := client.Delete(sid)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (rp *MemProvider) connectInit() error {
@@ -215,6 +219,7 @@ func (rp *MemProvider) connectInit() error {
 
 // SessionGC Impelment method, no used.
 func (rp *MemProvider) SessionGC() {
+	return
 }
 
 // SessionAll return all activeSession

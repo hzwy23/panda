@@ -163,7 +163,10 @@ func (fp *FileProvider) SessionExist(sid string) bool {
 	defer filepder.lock.Unlock()
 
 	_, err := os.Stat(path.Join(fp.savePath, string(sid[0]), string(sid[1]), sid))
-	return err == nil
+	if err == nil {
+		return true
+	}
+	return false
 }
 
 // SessionDestroy Remove all files in this save path

@@ -26,12 +26,6 @@ import (
 	"time"
 )
 
-const (
-	formatTime     = "15:04:05"
-	formatDate     = "2006-01-02"
-	formatDateTime = "2006-01-02 15:04:05"
-)
-
 // Substr returns the substr from start to length.
 func Substr(s string, start, length int) string {
 	bt := []rune(s)
@@ -52,25 +46,26 @@ func Substr(s string, start, length int) string {
 
 // HTML2str returns escaping text convert from html.
 func HTML2str(html string) string {
+	src := string(html)
 
 	re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-	html = re.ReplaceAllStringFunc(html, strings.ToLower)
+	src = re.ReplaceAllStringFunc(src, strings.ToLower)
 
 	//remove STYLE
 	re, _ = regexp.Compile("\\<style[\\S\\s]+?\\</style\\>")
-	html = re.ReplaceAllString(html, "")
+	src = re.ReplaceAllString(src, "")
 
 	//remove SCRIPT
 	re, _ = regexp.Compile("\\<script[\\S\\s]+?\\</script\\>")
-	html = re.ReplaceAllString(html, "")
+	src = re.ReplaceAllString(src, "")
 
 	re, _ = regexp.Compile("\\<[\\S\\s]+?\\>")
-	html = re.ReplaceAllString(html, "\n")
+	src = re.ReplaceAllString(src, "\n")
 
 	re, _ = regexp.Compile("\\s{2,}")
-	html = re.ReplaceAllString(html, "\n")
+	src = re.ReplaceAllString(src, "\n")
 
-	return strings.TrimSpace(html)
+	return strings.TrimSpace(src)
 }
 
 // DateFormat takes a time and a layout string and returns a string with the formatted date. Used by the template parser as "dateformat"
@@ -198,13 +193,15 @@ func Str2html(raw string) template.HTML {
 }
 
 // Htmlquote returns quoted html string.
-func Htmlquote(text string) string {
+func Htmlquote(src string) string {
 	//HTML编码为实体符号
 	/*
 	   Encodes `text` for raw use in HTML.
 	       >>> htmlquote("<'&\\">")
 	       '&lt;&#39;&amp;&quot;&gt;'
 	*/
+
+	text := string(src)
 
 	text = strings.Replace(text, "&", "&amp;", -1) // Must be done first!
 	text = strings.Replace(text, "<", "&lt;", -1)
@@ -219,7 +216,7 @@ func Htmlquote(text string) string {
 }
 
 // Htmlunquote returns unquoted html string.
-func Htmlunquote(text string) string {
+func Htmlunquote(src string) string {
 	//实体符号解释为HTML
 	/*
 	   Decodes `text` that's HTML quoted.
@@ -230,6 +227,7 @@ func Htmlunquote(text string) string {
 	// strings.Replace(s, old, new, n)
 	// 在s字符串中，把old字符串替换为new字符串，n表示替换的次数，小于0表示全部替换
 
+	text := string(src)
 	text = strings.Replace(text, "&nbsp;", " ", -1)
 	text = strings.Replace(text, "&rdquo;", "”", -1)
 	text = strings.Replace(text, "&ldquo;", "“", -1)
@@ -264,17 +262,19 @@ func URLFor(endpoint string, values ...interface{}) string {
 }
 
 // AssetsJs returns script tag with src string.
-func AssetsJs(text string) template.HTML {
+func AssetsJs(src string) template.HTML {
+	text := string(src)
 
-	text = "<script src=\"" + text + "\"></script>"
+	text = "<script src=\"" + src + "\"></script>"
 
 	return template.HTML(text)
 }
 
 // AssetsCSS returns stylesheet link tag with src string.
-func AssetsCSS(text string) template.HTML {
+func AssetsCSS(src string) template.HTML {
+	text := string(src)
 
-	text = "<link href=\"" + text + "\" rel=\"stylesheet\" />"
+	text = "<link href=\"" + src + "\" rel=\"stylesheet\" />"
 
 	return template.HTML(text)
 }
@@ -352,28 +352,11 @@ func parseFormToStruct(form url.Values, objT reflect.Type, objV reflect.Value) e
 		case reflect.Struct:
 			switch fieldT.Type.String() {
 			case "time.Time":
-				var (
-					t   time.Time
-					err error
-				)
-				if len(value) >= 25 {
-					value = value[:25]
-					t, err = time.ParseInLocation(time.RFC3339, value, time.Local)
-				} else if len(value) >= 19 {
-					value = value[:19]
-					t, err = time.ParseInLocation(formatDateTime, value, time.Local)
-				} else if len(value) >= 10 {
-					if len(value) > 10 {
-						value = value[:10]
-					}
-					t, err = time.ParseInLocation(formatDate, value, time.Local)
-				} else if len(value) >= 8 {
-					if len(value) > 8 {
-						value = value[:8]
-					}
-					t, err = time.ParseInLocation(formatTime, value, time.Local)
+				format := time.RFC3339
+				if len(tags) > 1 {
+					format = tags[1]
 				}
-
+				t, err := time.ParseInLocation(format, value, time.Local)
 				if err != nil {
 					return err
 				}

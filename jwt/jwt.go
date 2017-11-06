@@ -77,7 +77,7 @@ func ParseJwt(token string) (*JwtClaims, error) {
 		return key, nil
 	})
 	if err != nil {
-		fmt.Println("parase with claims failed.", err, token)
+		fmt.Println("parase with claims failed. error info is: ", err, ",token is: ", token)
 		return nil, errors.New("parase with claims failed.")
 	}
 	return jclaim, nil

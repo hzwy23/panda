@@ -267,12 +267,13 @@ func addPrefix(t *Tree, prefix string) {
 		addPrefix(t.wildcard, prefix)
 	}
 	for _, l := range t.leaves {
-		if c, ok := l.runObject.(*ControllerInfo); ok {
+		if c, ok := l.runObject.(*controllerInfo); ok {
 			if !strings.HasPrefix(c.pattern, prefix) {
 				c.pattern = prefix + c.pattern
 			}
 		}
 	}
+
 }
 
 // NSCond is Namespace Condition
@@ -283,16 +284,16 @@ func NSCond(cond namespaceCond) LinkNamespace {
 }
 
 // NSBefore Namespace BeforeRouter filter
-func NSBefore(filterList ...FilterFunc) LinkNamespace {
+func NSBefore(filiterList ...FilterFunc) LinkNamespace {
 	return func(ns *Namespace) {
-		ns.Filter("before", filterList...)
+		ns.Filter("before", filiterList...)
 	}
 }
 
 // NSAfter add Namespace FinishRouter filter
-func NSAfter(filterList ...FilterFunc) LinkNamespace {
+func NSAfter(filiterList ...FilterFunc) LinkNamespace {
 	return func(ns *Namespace) {
-		ns.Filter("after", filterList...)
+		ns.Filter("after", filiterList...)
 	}
 }
 

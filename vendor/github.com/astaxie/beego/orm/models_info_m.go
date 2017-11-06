@@ -78,7 +78,7 @@ func addModelFields(mi *modelInfo, ind reflect.Value, mName string, index []int)
 		fi.fieldIndex = append(index, i)
 		fi.mi = mi
 		fi.inModel = true
-		if !mi.fields.Add(fi) {
+		if mi.fields.Add(fi) == false {
 			err = fmt.Errorf("duplicate column name: %s", fi.column)
 			break
 		}

@@ -47,7 +47,7 @@ func (f *fields) Add(fi *fieldInfo) (added bool) {
 	} else {
 		return
 	}
-	if _, ok := f.fieldsByType[fi.fieldType]; !ok {
+	if _, ok := f.fieldsByType[fi.fieldType]; ok == false {
 		f.fieldsByType[fi.fieldType] = make([]*fieldInfo, 0)
 	}
 	f.fieldsByType[fi.fieldType] = append(f.fieldsByType[fi.fieldType], fi)
@@ -334,12 +334,12 @@ checkType:
 		switch onDelete {
 		case odCascade, odDoNothing:
 		case odSetDefault:
-			if !initial.Exist() {
+			if initial.Exist() == false {
 				err = errors.New("on_delete: set_default need set field a default value")
 				goto end
 			}
 		case odSetNULL:
-			if !fi.null {
+			if fi.null == false {
 				err = errors.New("on_delete: set_null need set field null")
 				goto end
 			}

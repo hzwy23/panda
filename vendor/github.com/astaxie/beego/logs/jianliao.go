@@ -25,7 +25,11 @@ func newJLWriter() Logger {
 
 // Init JLWriter with json config string
 func (s *JLWriter) Init(jsonconfig string) error {
-	return json.Unmarshal([]byte(jsonconfig), s)
+	err := json.Unmarshal([]byte(jsonconfig), s)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // WriteMsg write message in smtp writer.
@@ -61,10 +65,12 @@ func (s *JLWriter) WriteMsg(when time.Time, msg string, level int) error {
 
 // Flush implementing method. empty.
 func (s *JLWriter) Flush() {
+	return
 }
 
 // Destroy implementing method. empty.
 func (s *JLWriter) Destroy() {
+	return
 }
 
 func init() {

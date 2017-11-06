@@ -128,7 +128,7 @@ func bootStrap() {
 						if i := strings.LastIndex(fi.relThrough, "."); i != -1 && len(fi.relThrough) > (i+1) {
 							pn := fi.relThrough[:i]
 							rmi, ok := modelCache.getByFullName(fi.relThrough)
-							if !ok || pn != rmi.pkg {
+							if ok == false || pn != rmi.pkg {
 								err = fmt.Errorf("field `%s` wrong rel_through value `%s` cannot find table", fi.fullName, fi.relThrough)
 								goto end
 							}
@@ -171,7 +171,7 @@ func bootStrap() {
 						break
 					}
 				}
-				if !inModel {
+				if inModel == false {
 					rmi := fi.relModelInfo
 					ffi := new(fieldInfo)
 					ffi.name = mi.name
@@ -185,7 +185,7 @@ func bootStrap() {
 					} else {
 						ffi.fieldType = RelReverseMany
 					}
-					if !rmi.fields.Add(ffi) {
+					if rmi.fields.Add(ffi) == false {
 						added := false
 						for cnt := 0; cnt < 5; cnt++ {
 							ffi.name = fmt.Sprintf("%s%d", mi.name, cnt)
@@ -195,7 +195,7 @@ func bootStrap() {
 								break
 							}
 						}
-						if !added {
+						if added == false {
 							panic(fmt.Errorf("cannot generate auto reverse field info `%s` to `%s`", fi.fullName, ffi.fullName))
 						}
 					}
@@ -248,7 +248,7 @@ func bootStrap() {
 						break mForA
 					}
 				}
-				if !found {
+				if found == false {
 					err = fmt.Errorf("reverse field `%s` not found in model `%s`", fi.fullName, fi.relModelInfo.fullName)
 					goto end
 				}
@@ -267,7 +267,7 @@ func bootStrap() {
 						break mForB
 					}
 				}
-				if !found {
+				if found == false {
 				mForC:
 					for _, ffi := range fi.relModelInfo.fields.fieldsByType[RelManyToMany] {
 						conditions := fi.relThrough != "" && fi.relThrough == ffi.relThrough ||
@@ -287,7 +287,7 @@ func bootStrap() {
 						}
 					}
 				}
-				if !found {
+				if found == false {
 					err = fmt.Errorf("reverse field for `%s` not found in model `%s`", fi.fullName, fi.relModelInfo.fullName)
 					goto end
 				}

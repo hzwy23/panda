@@ -196,6 +196,7 @@ func (srv *Server) signalHooks(ppFlag int, sig os.Signal) {
 	for _, f := range srv.SignalHooks[ppFlag][sig] {
 		f()
 	}
+	return
 }
 
 // shutdown closes the listener so that no new connections are accepted. it also

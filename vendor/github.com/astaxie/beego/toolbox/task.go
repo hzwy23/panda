@@ -427,7 +427,6 @@ func run() {
 			}
 			continue
 		case <-changed:
-			now = time.Now().Local()
 			continue
 		case <-stop:
 			return

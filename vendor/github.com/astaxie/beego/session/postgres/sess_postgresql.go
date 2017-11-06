@@ -184,7 +184,11 @@ func (mp *Provider) SessionExist(sid string) bool {
 	row := c.QueryRow("select session_data from session where session_key=$1", sid)
 	var sessiondata []byte
 	err := row.Scan(&sessiondata)
-	return !(err == sql.ErrNoRows)
+
+	if err == sql.ErrNoRows {
+		return false
+	}
+	return true
 }
 
 // SessionRegenerate generate new sid for postgresql session
@@ -224,6 +228,7 @@ func (mp *Provider) SessionGC() {
 	c := mp.connectInit()
 	c.Exec("DELETE from session where EXTRACT(EPOCH FROM (current_timestamp - session_expiry)) > $1", mp.maxlifetime)
 	c.Close()
+	return
 }
 
 // SessionAll count values in postgresql session

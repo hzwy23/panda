@@ -134,7 +134,7 @@ func (d *dbBaseSqlite) IndexExists(db dbQuerier, table string, name string) bool
 	defer rows.Close()
 	for rows.Next() {
 		var tmp, index sql.NullString
-		rows.Scan(&tmp, &index, &tmp, &tmp, &tmp)
+		rows.Scan(&tmp, &index, &tmp)
 		if name == index.String {
 			return true
 		}

@@ -157,8 +157,8 @@ func listConf(rw http.ResponseWriter, r *http.Request) {
 					resultList := new([][]string)
 					for _, f := range bf {
 						var result = []string{
-							f.pattern,
-							utils.GetFuncName(f.filterFunc),
+							fmt.Sprintf("%s", f.pattern),
+							fmt.Sprintf("%s", utils.GetFuncName(f.filterFunc)),
 						}
 						*resultList = append(*resultList, result)
 					}
@@ -208,12 +208,12 @@ func printTree(resultList *[][]string, t *Tree) {
 		printTree(resultList, t.wildcard)
 	}
 	for _, l := range t.leaves {
-		if v, ok := l.runObject.(*ControllerInfo); ok {
+		if v, ok := l.runObject.(*controllerInfo); ok {
 			if v.routerType == routerTypeBeego {
 				var result = []string{
 					v.pattern,
 					fmt.Sprintf("%s", v.methods),
-					v.controllerType.String(),
+					fmt.Sprintf("%s", v.controllerType),
 				}
 				*resultList = append(*resultList, result)
 			} else if v.routerType == routerTypeRESTFul {
@@ -276,8 +276,8 @@ func profIndex(rw http.ResponseWriter, r *http.Request) {
 // it's in "/healthcheck" pattern in admin module.
 func healthcheck(rw http.ResponseWriter, req *http.Request) {
 	var (
-		result     []string
 		data       = make(map[interface{}]interface{})
+		result     = []string{}
 		resultList = new([][]string)
 		content    = map[string]interface{}{
 			"Fields": []string{"Name", "Message", "Status"},
@@ -287,20 +287,21 @@ func healthcheck(rw http.ResponseWriter, req *http.Request) {
 	for name, h := range toolbox.AdminCheckList {
 		if err := h.Check(); err != nil {
 			result = []string{
-				"error",
-				name,
-				err.Error(),
+				fmt.Sprintf("error"),
+				fmt.Sprintf("%s", name),
+				fmt.Sprintf("%s", err.Error()),
 			}
+
 		} else {
 			result = []string{
-				"success",
-				name,
-				"OK",
+				fmt.Sprintf("success"),
+				fmt.Sprintf("%s", name),
+				fmt.Sprintf("OK"),
 			}
+
 		}
 		*resultList = append(*resultList, result)
 	}
-
 	content["Data"] = resultList
 	data["Content"] = content
 	data["Title"] = "Health Check"
@@ -329,6 +330,7 @@ func taskStatus(rw http.ResponseWriter, req *http.Request) {
 	// List Tasks
 	content := make(map[string]interface{})
 	resultList := new([][]string)
+	var result = []string{}
 	var fields = []string{
 		"Task Name",
 		"Task Spec",
@@ -337,10 +339,10 @@ func taskStatus(rw http.ResponseWriter, req *http.Request) {
 		"",
 	}
 	for tname, tk := range toolbox.AdminTaskList {
-		result := []string{
+		result = []string{
 			tname,
-			tk.GetSpec(),
-			tk.GetStatus(),
+			fmt.Sprintf("%s", tk.GetSpec()),
+			fmt.Sprintf("%s", tk.GetStatus()),
 			tk.GetPrev().String(),
 		}
 		*resultList = append(*resultList, result)
