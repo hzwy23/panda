@@ -14,19 +14,25 @@ import (
 	"sync"
 )
 
-type config struct {
+type iniConfig struct {
 	Conf map[string]string
 	lock *sync.RWMutex
 	file string
 }
 
-func createConf() *config {
-	r := new(config)
+type iniLineOne struct {
+	line   string
+	index  int
+	offset int
+}
+
+func newINI() *iniConfig {
+	r := &iniConfig{}
 	r.Conf = make(map[string]string)
 	return r
 }
 
-func (c *config) getResource(dir string) error {
+func (c *iniConfig) getResource(dir string) error {
 	cont, err := ioutil.ReadFile(dir)
 
 	if err != nil {
@@ -51,7 +57,7 @@ func (c *config) getResource(dir string) error {
 	return nil
 }
 
-func (c *config) trimSpace(str string) string {
+func (c *iniConfig) trimSpace(str string) string {
 	var rst []byte
 
 	by := []byte(str)
@@ -73,7 +79,7 @@ func (c *config) trimSpace(str string) string {
 	return string(rst)
 }
 
-func (c *config) Set(key, value string) error {
+func (c *iniConfig) Set(key, value string) error {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 	if _, ok := c.Conf[key]; ok {
@@ -86,14 +92,9 @@ func (c *config) Set(key, value string) error {
 		newValue := key + "=" + value
 
 		rd := make([]byte, 1024)
-		type rdstruct struct {
-			line   string
-			index  int
-			offset int
-		}
 
-		var lines []rdstruct
-		var tmp rdstruct
+		var lines []iniLineOne
+		var tmp iniLineOne
 		var line []byte
 		var index = -1
 		var offset = 0
@@ -146,7 +147,6 @@ func (c *config) Set(key, value string) error {
 			mkey, _, _ := c.splitEqual(t1)
 
 			if mkey == key {
-				//te := make([]byte, val.offset)
 				var aprst []byte
 				fd.Seek(int64(val.index+val.offset), 0)
 				for {
@@ -186,8 +186,6 @@ func (c *config) Set(key, value string) error {
 					fd.WriteString(newValue + string(aprst))
 				}
 				fd.Close()
-			} else {
-				//fmt.Println(mkey, mkeyVal, err)
 			}
 		}
 		return nil
@@ -195,15 +193,25 @@ func (c *config) Set(key, value string) error {
 		// add configuration variable values.
 		op := key + "=" + value + "\n"
 		fd, err := os.OpenFile(c.file, os.O_APPEND, 666)
+		if err != nil {
+			return err
+		}
+		defer fd.Close()
+		// 读取最后文本最后一个自己，如果不是换行符，则添加一个换行符
+		fd.Seek(-1, 2)
+		var b []byte = make([]byte, 1)
+		fd.Read(b)
+		if b[0] != '\n' {
+			op = "\n" + op
+		}
 		_, err = fd.WriteString(op)
-		fd.Close()
 		return err
 	}
 	c.getResource(c.file)
 	return nil
 }
 
-func (c *config) Get(key string) (string, error) {
+func (c *iniConfig) Get(key string) (string, error) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 
@@ -214,7 +222,7 @@ func (c *config) Get(key string) (string, error) {
 	}
 }
 
-func (c *config) splitEqual(str string) (string, string, error) {
+func (c *iniConfig) splitEqual(str string) (string, string, error) {
 	by := []byte(str)
 	bgn := 0
 	end := 0
@@ -243,8 +251,8 @@ func (c *config) splitEqual(str string) (string, string, error) {
 }
 
 // GetDetails configuration infomation
-func GetConfig(path string) (*config, error) {
-	conf := createConf()
+func GetConfig(path string) (*iniConfig, error) {
+	conf := newINI()
 	conf.file = path
 	conf.lock = new(sync.RWMutex)
 	err := conf.getResource(path)
