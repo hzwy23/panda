@@ -1,28 +1,54 @@
 package jwt
 
 import (
-	"time"
-
-	jwt "github.com/dgrijalva/jwt-go"
+	"net/http"
+	"sync"
 )
 
-// 自定义Claims类
-type customClaims struct {
-	*jwt.StandardClaims
-	// 用户账号
-	UserId string
-	// 用户机构号
-	OrgUnitId string
-	// 用户角色
-	Authorities string `json:"authorities"`
+var (
+	handleLock    = new(sync.RWMutex)
+	defaultHandle *handle
+)
+
+// 校验token信息是否有效
+func ValidToken(token string) bool {
+	handleLock.RLock()
+	defer handleLock.RUnlock()
+	return defaultHandle.ValidToken(token)
 }
 
-func newClaims(conf *jwtConfig) *customClaims {
-	c := &customClaims{
-		StandardClaims: &jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix() + conf.duration,
-			Issuer:    conf.owner,
-		},
-	}
-	return c
+func ValidHttp(req *http.Request) bool {
+	handleLock.RLock()
+	defer handleLock.RUnlock()
+	return defaultHandle.ValidHttp(req)
+}
+
+// 解析token是否有效，如果有效，则返回customClaims实例对象
+func ParseToken(token string) (*customClaims, error) {
+	handleLock.RLock()
+	defer handleLock.RUnlock()
+	return defaultHandle.ParseToken(token)
+}
+
+func ParseHttp(req *http.Request) (*customClaims, error) {
+	handleLock.RLock()
+	defer handleLock.RUnlock()
+	return defaultHandle.ParseHttp(req)
+}
+
+// 修改默认的Handle方法
+func SetHandle(jwtHandle *handle) {
+	handleLock.Lock()
+	defaultHandle = jwtHandle
+	handleLock.Unlock()
+}
+
+func GenToken(private *Private) (string, error) {
+	handleLock.RLock()
+	defer handleLock.RUnlock()
+	return defaultHandle.GenToken(private)
+}
+
+func init() {
+	defaultHandle = NewHandle(defaultConfig)
 }

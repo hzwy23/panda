@@ -4,14 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
-)
-
-var (
-	handleLock    = new(sync.RWMutex)
-	defaultHandle *handle
 )
 
 const (
@@ -22,7 +16,6 @@ const (
 // jwt操作
 type handle struct {
 	*jwtConfig
-	*customClaims
 	lock *sync.RWMutex
 }
 
@@ -53,7 +46,6 @@ func (r *handle) ParseToken(token string) (*customClaims, error) {
 // 如果token有效，则返回true，如果无效，则返回false
 func (r *handle) ValidHttp(req *http.Request) bool {
 	token := r.httpToken(req)
-	r.Valid()
 	return r.ValidToken(token)
 }
 
@@ -76,41 +68,6 @@ func (r *handle) httpToken(req *http.Request) string {
 	return token
 }
 
-func (r *handle) SetUserId(userId string) *handle {
-	r.lock.Lock()
-	r.UserId = userId
-	r.lock.Unlock()
-	return r
-}
-
-func (r *handle) SetOrgUnitId(orgUnitId string) *handle {
-	r.lock.Lock()
-	r.OrgUnitId = orgUnitId
-	r.lock.Unlock()
-	return r
-}
-
-func (r *handle) SetAuthorities(author string) *handle {
-	r.lock.Lock()
-	r.Authorities = author
-	r.lock.Unlock()
-	return r
-}
-
-func (r *handle) SetExpiresAt(dt int64) *handle {
-	r.lock.Lock()
-	r.ExpiresAt = time.Now().Unix() + dt
-	r.lock.Unlock()
-	return r
-}
-
-func (r *handle) SetIssuer(issuer string) *handle {
-	r.lock.Lock()
-	r.Issuer = issuer
-	r.lock.Unlock()
-	return r
-}
-
 func (r *handle) SetKey(key []byte) *handle {
 	r.lock.Lock()
 	r.key = key
@@ -119,10 +76,13 @@ func (r *handle) SetKey(key []byte) *handle {
 }
 
 // 生成token
-func (r *handle) Build() (string, error) {
+func (r *handle) GenToken(private *Private) (string, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
-	c := jwt.NewWithClaims(jwt.SigningMethodHS256, r)
+
+	customClaims := newClaims(r.jwtConfig, private)
+
+	c := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 	token, err := c.SignedString(r.key)
 	if err != nil {
 		return "", err
@@ -130,56 +90,16 @@ func (r *handle) Build() (string, error) {
 	return token, nil
 }
 
-// 校验token信息是否有效
-func ValidToken(token string) bool {
-	handleLock.RLock()
-	defer handleLock.RUnlock()
-	return defaultHandle.ValidToken(token)
-}
-
-func ValidHttp(req *http.Request) bool {
-	handleLock.RLock()
-	defer handleLock.RUnlock()
-	return defaultHandle.ValidHttp(req)
-}
-
-// 解析token是否有效，如果有效，则返回customClaims实例对象
-func ParseToken(token string) (*customClaims, error) {
-	handleLock.RLock()
-	defer handleLock.RUnlock()
-	return defaultHandle.ParseToken(token)
-}
-
-func ParseHttp(req *http.Request) (*customClaims, error) {
-	handleLock.RLock()
-	defer handleLock.RUnlock()
-	return defaultHandle.ParseHttp(req)
-}
-
 // 创建jwtHandle实例对象
 func NewHandle(conf *jwtConfig) *handle {
 	if conf == nil {
 		handleLock.RLock()
-		conf = &jwtConfig{
-			key:     []byte("https://github.com/hzwy23"),
-			ipValid: false,
-		}
+		conf = defaultConfig
+		conf.key = []byte("https://github.com/hzwy23")
 		handleLock.RUnlock()
 	}
 	return &handle{
-		jwtConfig:    conf,
-		customClaims: newClaims(conf),
-		lock:         new(sync.RWMutex),
+		jwtConfig: conf,
+		lock:      new(sync.RWMutex),
 	}
-}
-
-// 修改默认的Handle方法
-func SetHandle(jwtHandle *handle) {
-	handleLock.Lock()
-	defaultHandle = jwtHandle
-	handleLock.Unlock()
-}
-
-func init() {
-	defaultHandle = NewHandle(defaultConfig)
 }
