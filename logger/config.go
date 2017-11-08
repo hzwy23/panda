@@ -74,7 +74,6 @@ func (r *LogConfig) SetLogDirPath(p string) {
 }
 
 func (r *LogConfig) LoadConfigFile() *LogConfig {
-
 	c, err := config.Load(r.confPath)
 	if err != nil {
 		r.msg = append(r.msg, "读取日志配置信息失败，将会使用默认配置来初始化日志文件，读取日志错误信息是：", err.Error())

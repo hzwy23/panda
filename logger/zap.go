@@ -3,7 +3,6 @@ package logger
 import (
 	"fmt"
 	"os"
-
 	"time"
 
 	"go.uber.org/zap"
