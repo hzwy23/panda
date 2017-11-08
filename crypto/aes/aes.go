@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// AES加密
+// AES加密服务组件
 // key 存储的是密钥信息，目前支持16位，24位，32位长度的密钥
 // either 16, 24, or 32 bytes to select
 // AES-128, AES-192, or AES-256.
