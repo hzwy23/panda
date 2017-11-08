@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// AES机密功能
+// AES加密
 // key 存储的是密钥信息，目前支持16位，24位，32位长度的密钥
 // either 16, 24, or 32 bytes to select
 // AES-128, AES-192, or AES-256.
@@ -72,8 +72,8 @@ func (r *AES) Decrypt(cryptotext string) (string, error) {
 	origData := make([]byte, len(crypted))
 
 	blockMode.CryptBlocks(origData, crypted)
-	origData, _ = r.pkcs5UnPadding(origData)
-	return string(origData), nil
+	origData, err = r.pkcs5UnPadding(origData)
+	return string(origData), err
 }
 
 func (r *AES) SetKey(key string) error {
