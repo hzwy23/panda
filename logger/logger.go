@@ -15,74 +15,10 @@
 package logger
 
 import (
-	"fmt"
-	"os"
-	"path"
-	"path/filepath"
-	"sync"
-	"time"
-
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
-var (
-	log  = new(zap.SugaredLogger)
-	lock = new(sync.RWMutex)
-)
-
-type Logger = *zap.SugaredLogger
-
-// 没有参数时,返回系统正常操作日志接口
-// 当有参数时,不管参数是什么值,返回紧急日志备份接口
-func GetLogger() Logger {
-	lock.RLock()
-	defer lock.RLock()
-	return log
-}
-
-func NewLogger(filePath string, level string) Logger {
-	// 创建日志参数配置对象
-	cfg := zap.NewProductionConfig()
-
-	logpath := os.Getenv("HBIGDATA_HOME")
-	// 生成日志文件路径
-	filename := filepath.Join(logpath, "temp", "log", filePath)
-
-	//判断日志所在目录,是否存在
-	_, err := os.Stat(filepath.Join(logpath, "temp", "log"))
-	if err != nil {
-		if os.IsNotExist(err) {
-			// 创建日志目录
-			err := os.MkdirAll(filepath.Join(logpath, "temp", "log"), os.ModeDir)
-			if err != nil {
-				fmt.Println("文件不存在,创建日志文件失败")
-				// 日志文件无法创建
-				// 使用console作为日志输出
-			} else {
-				cfg.OutputPaths = []string{filename}
-				cfg.ErrorOutputPaths = []string{filename}
-			}
-		}
-		// 如果日志文件存在,但是无法获取Stat信息
-		// 将日志输出到console上
-	} else {
-		cfg.OutputPaths = []string{filename}
-		cfg.ErrorOutputPaths = []string{filename}
-	}
-
-	cfg.EncoderConfig.EncodeTime = iso8601TimeEncoder
-	cfg.DisableStacktrace = true
-
-	cfg.Level.UnmarshalText([]byte(level))
-	lo, err := cfg.Build()
-	if err != nil {
-		fmt.Println(err)
-		log = back_emc
-		return nil
-	}
-	return lo.WithOptions(zap.AddCallerSkip(1)).Sugar()
-}
+var log = &zap.SugaredLogger{}
 
 // Error logs a message at error level.
 func Error(v ...interface{}) {
@@ -114,67 +50,6 @@ func Panic(v ...interface{}) {
 	log.Panic(v...)
 }
 
-func iso8601TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString(t.Format("2006-01-02 15:04:05"))
-}
-
 func init() {
-	//GetDetails log dir from environment
-	logpath := os.Getenv("HBIGDATA_HOME")
-
-	conf, err := GetConfig(path.Join(logpath, "conf", "wisrc.conf"))
-	if err != nil {
-		fmt.Println(err)
-		log = back_emc
-		return
-	}
-
-	// 创建日志参数配置对象
-	cfg := zap.NewProductionConfig()
-
-	// 生成日志文件路径
-	filename := filepath.Join(logpath, "temp", "log", "wisrc.log")
-
-	//判断日志所在目录,是否存在
-	_, err = os.Stat(filepath.Join(logpath, "temp", "log"))
-	if err != nil {
-		if os.IsNotExist(err) {
-			// 创建日志目录
-			err := os.MkdirAll(filepath.Join(logpath, "temp", "log"), os.ModeDir)
-			if err != nil {
-				fmt.Println("文件不存在,创建日志文件失败")
-				// 日志文件无法创建
-				// 使用console作为日志输出
-			} else {
-				cfg.OutputPaths = []string{filename}
-				cfg.ErrorOutputPaths = []string{filename}
-			}
-		}
-		// 如果日志文件存在,但是无法获取Stat信息
-		// 将日志输出到console上
-	} else {
-		cfg.OutputPaths = []string{filename}
-		cfg.ErrorOutputPaths = []string{filename}
-	}
-
-	log_level, err := conf.Get("Logger.level")
-	if err != nil {
-		fmt.Errorf("%s", "log level not set, set log level as default value.")
-		log_level = "info"
-	}
-
-	cfg.EncoderConfig.EncodeTime = iso8601TimeEncoder
-	cfg.DisableStacktrace = true
-
-	cfg.Level.UnmarshalText([]byte(log_level))
-	logger, err := cfg.Build()
-	if err != nil {
-		fmt.Println(err)
-		log = back_emc
-		return
-	}
-
-	lock.Lock()
-	defer lock.Unlock()
-	log = logger.WithOptions(zap.AddCallerSkip(1)).Sugar()
+	log = NewLogger(defaultConfig)
 }

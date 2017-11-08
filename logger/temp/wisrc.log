@@ -1,0 +1,2 @@
+{"level":"info","ts":"2017-11-08 17:38:53","caller":"logger/logger_test.go:10","msg":"hello world abcd"}
+{"level":"info","ts":"2017-11-08 17:38:53","caller":"logger/logger_test.go:11","msg":"my name is huang zhan wei"}
