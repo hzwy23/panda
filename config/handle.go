@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Handle interface {
@@ -23,7 +22,6 @@ const (
 // YARM,JSON,INI
 func Load(filePath string, typ ...string) (Handle, error) {
 	if len(typ) == 0 {
-		fmt.Println("default ini")
 		return createINIConfig(filePath)
 	}
 	switch typ[0] {
