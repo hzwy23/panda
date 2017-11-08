@@ -16,11 +16,12 @@ import (
 
 // Ini type configuration file
 type iniConfig struct {
-	val map[string]string
+	val  map[string]string
 	lock *sync.RWMutex
 	file string
 }
 
+// key value pair
 type iniLineOne struct {
 	line   string
 	index  int
