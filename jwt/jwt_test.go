@@ -1,18 +1,31 @@
-package jwt
+package jwt_test
 
 import (
-	"fmt"
 	"testing"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"fmt"
+
+	"github.com/hzwy23/utils/jwt"
 )
 
-var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTk5MzcwNjcsImlzcyI6Imh6d3kyMyIsIlVzZXJJZCI6ImNhYWRtaW4iLCJEb21haW5JZCI6Im1hcyIsIk9yZ1VuaXRJZCI6Im1hc19qb2luXzM0MTI0IiwiYXV0aG9yaXRpZXMiOiJST0xFX0FETUlOLEFVVEhfV1JJVEUsQUNUVUFUT1IifQ.-xtxhlSyhQjPlCJV1rGFhRm1Ac4_PjpxFNnB8kp7Xjg"
-
 func TestToken(t *testing.T) {
-	var jclaim = &JwtClaims{}
-	_, err := jwt.ParseWithClaims(token, jclaim, func(*jwt.Token) (interface{}, error) {
-		return key, nil
-	})
-	fmt.Println(err)
+	// 创建token
+	token, err := jwt.NewHandle(nil).SetUserId("owner").Build()
+	fmt.Println(token, err)
+
+	// 解析token
+	parse, err := jwt.ParseToken(token)
+	fmt.Println("claims is:", parse, err)
+
+	// 使用不同的key解析token，结果显示解析失败
+	j := jwt.NewJwtConfig([]byte("hello world"))
+	token2, err := jwt.NewHandle(j).SetUserId("owner").Build()
+	fmt.Println(jwt.ParseToken(token2))
+
+	fmt.Println(jwt.ValidToken(token))
+	fmt.Println(jwt.ValidToken(token2))
+
+	newHandle := jwt.NewHandle(nil).SetUserId("hzwy23")
+	newHandle.Build()
+
 }
