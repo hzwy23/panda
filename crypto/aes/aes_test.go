@@ -14,7 +14,7 @@ func TestDefaultCrypt(t *testing.T) {
 	plainText, err := aes.Decrypt(cryptoText)
 	fmt.Println(plainText, err)
 
-	err = aes.SetKey("1234567890123456")
+	err = aes.SetDefaultKey("1234567890123456")
 	fmt.Println(err)
 	cryptoText, err = aes.Encrypt("123456")
 	fmt.Println(cryptoText, err)

@@ -117,7 +117,7 @@ func Decrypt(dt string) (string, error) {
 	return defaultAES.Decrypt(dt)
 }
 
-func SetKey(key string) error {
+func SetDefaultKey(key string) error {
 	return defaultAES.SetKey(key)
 }
 
