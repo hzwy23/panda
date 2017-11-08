@@ -18,4 +18,6 @@ func TestLoad(t *testing.T) {
 	fmt.Println(c, err)
 
 	fmt.Println(c.Set("myyfwe", "demfdsdfo"))
+	fmt.Println(c.Get("abc"))
+	fmt.Println(c.Get("hello"))
 }

@@ -14,8 +14,9 @@ import (
 	"sync"
 )
 
+// Ini type configuration file
 type iniConfig struct {
-	Conf map[string]string
+	val map[string]string
 	lock *sync.RWMutex
 	file string
 }
@@ -26,10 +27,18 @@ type iniLineOne struct {
 	offset int
 }
 
-func newINI() *iniConfig {
-	r := &iniConfig{}
-	r.Conf = make(map[string]string)
-	return r
+func createINIConfig(path string) (*iniConfig, error) {
+	conf := &iniConfig{}
+	conf.val = make(map[string]string)
+	conf.file = path
+	conf.lock = new(sync.RWMutex)
+
+	err := conf.getResource(path)
+	if err != nil {
+		return nil, err
+	} else {
+		return conf, nil
+	}
 }
 
 func (c *iniConfig) getResource(dir string) error {
@@ -39,8 +48,8 @@ func (c *iniConfig) getResource(dir string) error {
 		return err
 	}
 	conf := strings.Split(string(cont), "\n")
-	c.lock.RLock()
-	defer c.lock.RUnlock()
+	c.lock.Lock()
+	defer c.lock.Unlock()
 
 	for _, val := range conf {
 		val = strings.TrimSpace(val)
@@ -51,7 +60,7 @@ func (c *iniConfig) getResource(dir string) error {
 		}
 		key, keyVal, err := c.splitEqual(a)
 		if err == nil {
-			c.Conf[key] = keyVal
+			c.val[key] = keyVal
 		}
 	}
 	return nil
@@ -79,10 +88,12 @@ func (c *iniConfig) trimSpace(str string) string {
 	return string(rst)
 }
 
+// Modify the value of key in the configuration file.
+// If the key does not exist, the key value pair will be added to the configuration file
 func (c *iniConfig) Set(key, value string) error {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	if _, ok := c.Conf[key]; ok {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	if _, ok := c.val[key]; ok {
 
 		// modify configuration variable values.
 		fd, err := os.OpenFile(c.file, os.O_RDWR, 666)
@@ -211,25 +222,30 @@ func (c *iniConfig) Set(key, value string) error {
 	return nil
 }
 
+// read key's value from the configuration file
+// if the key does not exist, return key's value is dirty data, error is not nil.
+// if the key exist, return the key's value, error is nil
 func (c *iniConfig) Get(key string) (string, error) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 
-	if val, ok := c.Conf[key]; ok {
+	if val, ok := c.val[key]; ok {
 		return val, nil
 	} else {
-		return "", errors.New("cant't find value of " + key)
+		return "", errors.New("The key [" + key + "] doesn't exist")
 	}
 }
 
 func (c *iniConfig) splitEqual(str string) (string, string, error) {
-	by := []byte(str)
+	if len(str) == 0 {
+		return "", "", errors.New("empty value")
+	}
 	bgn := 0
 	end := 0
-	var key string
-	var keyVal string
+	key := ""
+	keyVal := ""
 
-	for _, val := range by {
+	for _, val := range str {
 		if val == '"' && bgn == 0 {
 			bgn = 1
 		} else if val == '"' && bgn == 1 {
@@ -248,17 +264,4 @@ func (c *iniConfig) splitEqual(str string) (string, string, error) {
 		return "", "", errors.New("empty value")
 	}
 	return strings.Trim(key, "\""), strings.Trim(keyVal, "\""), nil
-}
-
-// GetDetails configuration infomation
-func GetConfig(path string) (*iniConfig, error) {
-	conf := newINI()
-	conf.file = path
-	conf.lock = new(sync.RWMutex)
-	err := conf.getResource(path)
-	if err != nil {
-		return nil, err
-	} else {
-		return conf, nil
-	}
 }

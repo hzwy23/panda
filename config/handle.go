@@ -24,18 +24,22 @@ const (
 func Load(filePath string, typ ...string) (Handle, error) {
 	if len(typ) == 0 {
 		fmt.Println("default ini")
-		return GetConfig(filePath)
+		return createINIConfig(filePath)
 	}
 	switch typ[0] {
 	case INI:
-		return GetConfig(filePath)
+		return createINIConfig(filePath)
 	case YAML:
 		// TODO
-		return GetConfig(filePath)
+		// YAML 配置文件读取方式
+		return createINIConfig(filePath)
 	case JSON:
 		// TODO
-		return GetConfig(filePath)
+		// JSON 类型配置文件读取方式
+		return createINIConfig(filePath)
 	}
+
+	// 无效的配置文件类型
 	return newEmptyConfig()
 }
 
