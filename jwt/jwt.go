@@ -17,47 +17,12 @@ type customClaims struct {
 	Authorities string `json:"authorities"`
 }
 
-const (
-	owner    string = "hzwy23"
-	duration int64  = 3600
-)
-
-func newClaims() *customClaims {
+func newClaims(conf *jwtConfig) *customClaims {
 	c := &customClaims{
 		StandardClaims: &jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix() + duration,
-			Issuer:    owner,
+			ExpiresAt: time.Now().Unix() + conf.duration,
+			Issuer:    conf.owner,
 		},
 	}
 	return c
 }
-
-
-
-//func CheckToken(req *http.Request) bool {
-//	cookie, err := req.Cookie("Authorization")
-//	token := ""
-//	if err != nil || len(cookie.Value) == 0 {
-//		token = req.FormValue("Authorization")
-//	} else {
-//		token = cookie.Value
-//	}
-//
-//	_, err = ParseJwt(token)
-//	if err != nil {
-//		fmt.Println(err)
-//		return false
-//	}
-//	return true
-//}
-//
-
-//
-//func Getclaims(request *http.Request) (*claims, error) {
-//	cookie, err := request.Cookie("Authorization")
-//	if err != nil || cookie == nil || len(cookie.Value) == 0 {
-//		jwt := request.Header.Get("Authorization")
-//		return ParseJwt(jwt)
-//	}
-//	return ParseJwt(cookie.Value)
-//}

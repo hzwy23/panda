@@ -168,7 +168,7 @@ func NewHandle(conf *jwtConfig) *handle {
 	}
 	return &handle{
 		jwtConfig:    conf,
-		customClaims: newClaims(),
+		customClaims: newClaims(conf),
 		lock:         new(sync.RWMutex),
 	}
 }
