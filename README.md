@@ -10,7 +10,7 @@ go get github.com/hzwy23/utils
 
 ## 简介
 
-这是一个自己收集的常用工具包, 目前在[asofdate项目](https://github.com/hzwy23/asofdate)中使用.
+这是一个自己收集和编写的的常用工具包
 
 utils中模块简介:
 
@@ -20,6 +20,5 @@ utils中模块简介:
 4. log日志处理,基于go-uber封装制作
 5. jwt功能
 6. 日期处理功能
-7. hauth项目中联合主键操作
-8. 加密操作
-9. 封装beego路由服务
+7. 加密操作
+8. 封装beego路由服务
