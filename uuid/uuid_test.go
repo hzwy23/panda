@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hzwy23/utils/uuid"
+	"github.com/hzwy23/panda/uuid"
 )
 
 func TestUuid(t *testing.T) {
