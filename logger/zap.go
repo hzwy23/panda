@@ -9,33 +9,35 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(conf *LogConfig) *zap.SugaredLogger {
+type Logger = zap.SugaredLogger
+
+func NewLogger(conf *Config) *Logger {
 	if conf == nil {
-		conf = NewLogConfig()
+		conf = NewConfig()
 	}
 	// 创建日志参数配置对象
 	cfg := zap.NewProductionConfig()
 
 	//判断日志所在目录,是否存在
-	_, err := os.Stat(conf.logFilePath)
+	_, err := os.Stat(conf.GetLogFile())
 	if err != nil {
 		if os.IsNotExist(err) {
 			// 创建日志目录
-			err := os.MkdirAll(conf.logDirPath, os.ModePerm)
+			err := os.MkdirAll(conf.logOutputDir, os.ModePerm)
 			if err != nil {
 				// 日志文件无法创建
 				// 使用console作为日志输出
 				fmt.Println("创建日志文件目录失败，将会使用控制台输出日志文件信息")
 			} else {
-				cfg.OutputPaths = []string{conf.logFilePath}
-				cfg.ErrorOutputPaths = []string{conf.logFilePath}
+				cfg.OutputPaths = []string{conf.GetLogFile()}
+				cfg.ErrorOutputPaths = []string{conf.GetLogFile()}
 			}
 		}
 		// 如果日志文件存在,但是无法获取Stat信息
 		// 将日志输出到console上
 	} else {
-		cfg.OutputPaths = []string{conf.logFilePath}
-		cfg.ErrorOutputPaths = []string{conf.logFilePath}
+		cfg.OutputPaths = []string{conf.GetLogFile()}
+		cfg.ErrorOutputPaths = []string{conf.GetLogFile()}
 	}
 
 	cfg.EncoderConfig.EncodeTime = iso8601TimeEncoder

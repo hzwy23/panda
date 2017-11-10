@@ -14,11 +14,8 @@
 
 package logger
 
-import (
-	"go.uber.org/zap"
-)
 
-var log = &zap.SugaredLogger{}
+var log *Logger
 
 // Error logs a message at error level.
 func Error(v ...interface{}) {
