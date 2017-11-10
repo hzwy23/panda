@@ -17,7 +17,7 @@ func Index2(w http.ResponseWriter,r *http.Request,ps route.Params){
 }
 
 func TestGET(t *testing.T) {
-	mux := route.GetRouter()
+	mux := route.GetDefaultRouter()
 	route.Handler("GET","/",Index)
 	route.GET("/:httprouter",Index2)
 	http.ListenAndServe(":8080",mux)
