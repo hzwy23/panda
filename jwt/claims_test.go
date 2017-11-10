@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"github.com/hzwy23/utils/jwt"
+	"github.com/hzwy23/panda/jwt"
 )
 
 func TestToken(t *testing.T) {
