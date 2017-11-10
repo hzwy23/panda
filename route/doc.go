@@ -21,7 +21,7 @@
 //		}
 //
 //		func main() {
-//			mux := route.GetHttpRouter()
+//			mux := route.GetRouter()
 //			route.HandlerFunc("GET","/",Index)
 //			route.GET("/:httprouter",Index2)
 //			http.ListenAndServe(":8080",mux)

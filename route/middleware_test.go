@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
-	"github.com/hzwy23/httprouter"
 	"github.com/hzwy23/panda/route"
 )
 
@@ -37,9 +36,12 @@ func TestNewMiddle(t *testing.T) {
 
 
 func TestNewMiddleware(t *testing.T) {
-	mux:=httprouter.New()
+	mux:= route.NewRouter()
 
 	mux.POST("/:name/:bcd",Index2)
+	mux.HandlerFunc("POST","/",func(w http.ResponseWriter,r *http.Request){
+		fmt.Println("hi HandleFunc")
+	})
 
 	handle := route.Wrap(mux)
 	mid := route.NewMiddleware(handle, &b{}, &a{})
