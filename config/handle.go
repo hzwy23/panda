@@ -12,6 +12,7 @@ type Handle interface {
 	// 如果key值存在，则返回key对应的value，error为nil
 	// 如果key不存在，则error显示错误信息
 	Get(key string) (string, error)
+
 	// 修改key对应的value值，如果key不存在，则新增key，value键值对，
 	// 如果key存在，则修改key对应的value值，操作成功，error返回值是nil，
 	// 否则error返回错误信息
