@@ -1,9 +1,7 @@
 package jwt
 
-// jwt配置类
-// TODO
-// 继续完善功能需求，增加更多可选的配置项
-type jwtConfig struct {
+// jwt配置类，
+type Config struct {
 	key      []byte
 	duration int64
 	ipValid  bool
@@ -11,8 +9,8 @@ type jwtConfig struct {
 }
 
 // 创建配置实例对象
-func NewJwtConfig(key []byte) *jwtConfig {
-	return &jwtConfig{
+func NewConfig(key []byte) *Config {
+	return &Config{
 		key:      key,
 		duration: 3600,
 		ipValid:  false,
@@ -20,10 +18,9 @@ func NewJwtConfig(key []byte) *jwtConfig {
 	}
 }
 
-// 默认配置
-var defaultConfig = &jwtConfig{
-	key:      []byte("hzwy23@163.com-jwt"),
-	duration: 3600,
-	ipValid:  false,
-	owner:    "hzwy23",
+// 默认配置实例对象
+var defaultConfig *Config
+
+func init() {
+	defaultConfig = NewConfig([]byte("hzwy23@163.com-jwt"))
 }

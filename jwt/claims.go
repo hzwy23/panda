@@ -9,21 +9,21 @@ import (
 // 自定义Claims类
 type customClaims struct {
 	*jwt.StandardClaims
-	*Private
+	Userdata *Userdata
 }
 
-func newClaims(conf *jwtConfig, private *Private) *customClaims {
+func newClaims(conf *Config, userData *Userdata) *customClaims {
 	c := &customClaims{
 		StandardClaims: &jwt.StandardClaims{
 			ExpiresAt: time.Now().Unix() + conf.duration,
 			Issuer:    conf.owner,
 		},
-		Private: private,
+		Userdata: userData,
 	}
 	return c
 }
 
-type Private struct {
+type Userdata struct {
 	// 用户账号
 	UserId string
 	// 用户机构号
@@ -32,22 +32,22 @@ type Private struct {
 	Authorities string `json:"authorities"`
 }
 
-func NewPrivate() *Private {
-	return &Private{
+func NewUserdata() *Userdata {
+	return &Userdata{
 		Authorities: "",
 	}
 }
 
-func (r *Private) SetUserId(userId string) *Private {
+func (r *Userdata) SetUserId(userId string) *Userdata {
 	r.UserId = userId
 	return r
 }
 
-func (r *Private) SetOrgunitId(orgId string) *Private {
+func (r *Userdata) SetOrgunitId(orgId string) *Userdata {
 	r.OrgUnitId = orgId
 	return r
 }
-func (r *Private) SetAuthorities(a string) *Private {
+func (r *Userdata) SetAuthorities(a string) *Userdata {
 	r.Authorities = a
 	return r
 }
