@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/hzwy23/utils/config"
+	"github.com/hzwy23/panda/config"
 )
 
 // 日志文件配置类

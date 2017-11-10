@@ -3,7 +3,7 @@ package logger_test
 import (
 	"testing"
 
-	"github.com/hzwy23/utils/logger"
+	"github.com/hzwy23/panda/logger"
 )
 
 func TestNewLogger(t *testing.T) {
