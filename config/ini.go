@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package config implements configuration file read
 package config
 
 import (
@@ -15,7 +14,7 @@ import (
 )
 
 // Ini type configuration file
-type iniConfig struct {
+type INIConfig struct {
 	val  map[string]string
 	lock *sync.RWMutex
 	file string
@@ -28,8 +27,8 @@ type iniLineOne struct {
 	offset int
 }
 
-func createINIConfig(path string) (*iniConfig, error) {
-	conf := &iniConfig{}
+func createINIConfig(path string) (*INIConfig, error) {
+	conf := &INIConfig{}
 	conf.val = make(map[string]string)
 	conf.file = path
 	conf.lock = new(sync.RWMutex)
@@ -42,7 +41,7 @@ func createINIConfig(path string) (*iniConfig, error) {
 	}
 }
 
-func (c *iniConfig) getResource(dir string) error {
+func (c *INIConfig) getResource(dir string) error {
 	cont, err := ioutil.ReadFile(dir)
 
 	if err != nil {
@@ -67,7 +66,7 @@ func (c *iniConfig) getResource(dir string) error {
 	return nil
 }
 
-func (c *iniConfig) trimSpace(str string) string {
+func (c *INIConfig) trimSpace(str string) string {
 	var rst []byte
 
 	by := []byte(str)
@@ -91,7 +90,7 @@ func (c *iniConfig) trimSpace(str string) string {
 
 // Modify the value of key in the configuration file.
 // If the key does not exist, the key value pair will be added to the configuration file
-func (c *iniConfig) Set(key, value string) error {
+func (c *INIConfig) Set(key, value string) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	if _, ok := c.val[key]; ok {
@@ -226,7 +225,7 @@ func (c *iniConfig) Set(key, value string) error {
 // read key's value from the configuration file
 // if the key does not exist, return key's value is dirty data, error is not nil.
 // if the key exist, return the key's value, error is nil
-func (c *iniConfig) Get(key string) (string, error) {
+func (c *INIConfig) Get(key string) (string, error) {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 
@@ -237,7 +236,7 @@ func (c *iniConfig) Get(key string) (string, error) {
 	}
 }
 
-func (c *iniConfig) splitEqual(str string) (string, string, error) {
+func (c *INIConfig) splitEqual(str string) (string, string, error) {
 	if len(str) == 0 {
 		return "", "", errors.New("empty value")
 	}
