@@ -2,49 +2,19 @@ package router
 
 import (
 	"github.com/hzwy23/httprouter"
-	"net/http"
 )
 
-var defaultHttprouter *httprouter.Router
+// httprouter路由服务函数接口
+type Handle = httprouter.Handle
 
-func GetNative(path string,handlerFunc http.HandlerFunc){
-	defaultHttprouter.HandlerFunc("GET",path,handlerFunc)
-}
+// 正则路由匹配到的参数列表
+// 只有在注册路由服务的时候，使用了正则路由，Params中才会有值
+// 并且正则路由只能使用Handler类型的函数一起使用
+type Params = httprouter.Params
 
-func PostNative(path string,handlerFunc http.HandlerFunc){
-	defaultHttprouter.HandlerFunc("POST",path,handlerFunc)
-}
+// httprouter路由
+type Router = httprouter.Router
 
-func DeleteNative(path string,handlerFunc http.HandlerFunc){
-	defaultHttprouter.HandlerFunc("DELETE",path,handlerFunc)
-}
-
-func PutNative(path string,handlerFunc http.HandlerFunc){
-	defaultHttprouter.HandlerFunc("PUT",path,handlerFunc)
-}
-
-type Handler = httprouter.Handle
-
-func GET(path string, handle httprouter.Handle) {
-	defaultHttprouter.GET(path,handle)
-}
-
-func POST(path string ,handle httprouter.Handle){
-	defaultHttprouter.POST(path,handle)
-}
-
-func DELETE(path string, handle httprouter.Handle){
-	defaultHttprouter.DELETE(path,handle)
-}
-
-func PUT(path string, handle httprouter.Handle){
-	defaultHttprouter.PUT(path,handle)
-}
-
-func GetHttpMux() *httprouter.Router {
-	return defaultHttprouter
-}
-
-func init(){
-	defaultHttprouter = httprouter.New()
+func NewRouter() *Router{
+	return httprouter.New()
 }
