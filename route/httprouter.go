@@ -26,7 +26,6 @@ func GetDefaultRouter() *httprouter.Router {
 	return defaultHttprouter
 }
 
-
 // 注册路由，
 // 使用http.HandlerFunc类型的函数注册路由，
 // method是路由请求方法，
@@ -35,8 +34,6 @@ func GetDefaultRouter() *httprouter.Router {
 func Handler(method, path string, handler http.HandlerFunc){
 	defaultHttprouter.Handler(method,path,handler)
 }
-
-
 
 // 向默认路由实例对象中注册路由，路由请求方式是GET，
 // path 是路由地址，
