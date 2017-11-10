@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hzwy23/utils/config"
+	"github.com/hzwy23/panda/config"
 )
 
 func TestLoad(t *testing.T) {
