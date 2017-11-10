@@ -1,0 +1,4 @@
+{"level":"warn","ts":"2017-11-10 22:34:40","caller":"logger/logger.go:51","msg":"读取日志配置信息失败，将会使用默认配置来初始化日志文件，读取日志错误信息是："}
+{"level":"warn","ts":"2017-11-10 22:34:40","caller":"logger/logger.go:51","msg":"open conf\\log.conf: The system cannot find the path specified."}
+{"level":"info","ts":"2017-11-10 22:34:40","caller":"logger/logger_test.go:10","msg":"hello world abcd"}
+{"level":"info","ts":"2017-11-10 22:34:40","caller":"logger/logger_test.go:11","msg":"my name is huang zhan wei"}

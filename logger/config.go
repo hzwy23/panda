@@ -40,7 +40,7 @@ func NewConfig(file ...string) *Config {
 	configFile:=filepath.Join(prefix,fp)
 
 	conf := &Config{
-		logOutputDir:  filepath.Join("temp"),
+		logOutputDir:  "temp",
 		logLevel:    "info",
 		logName:     "wisrc.log",
 		lock:        new(sync.RWMutex),
