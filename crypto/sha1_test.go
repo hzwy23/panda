@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hzwy23/utils/crypto"
+	"github.com/hzwy23/panda/crypto"
 )
 
 func TestSha1(t *testing.T) {

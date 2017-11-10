@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hzwy23/utils/crypto/aes"
+	"github.com/hzwy23/panda/crypto/aes"
 )
 
 func TestDefaultCrypt(t *testing.T) {
