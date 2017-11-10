@@ -10,8 +10,6 @@ go get github.com/hzwy23/panda
 
 ## 简介
 
-这是一个自己收集和编写的的常用工具包
-
 panda中模块简介:
 
 1. 配置文件读物模块
