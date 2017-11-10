@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"github.com/hzwy23/httprouter"
 )
 
 type a struct {
@@ -27,6 +28,25 @@ func TestNewMiddle(t *testing.T) {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("index")
 	})
+
+	handle := Wrap(mux)
+	mid := NewMiddleware(handle, &b{}, &a{})
+	http.ListenAndServe(":8080", mid)
+}
+
+func Index(w http.ResponseWriter,r *http.Request, ps httprouter.Params){
+	fmt.Println(ps)
+	fmt.Println(w,r)
+}
+
+func Index2(w http.ResponseWriter,r *http.Request,ps httprouter.Params){
+	fmt.Println(ps)
+}
+
+func TestNewMiddleware(t *testing.T) {
+	mux:=httprouter.New()
+
+	mux.POST("/:name/:bcd",Index)
 
 	handle := Wrap(mux)
 	mid := NewMiddleware(handle, &b{}, &a{})
