@@ -1,10 +1,11 @@
-package router
+package route_test
 
 import (
 	"fmt"
 	"net/http"
 	"testing"
 	"github.com/hzwy23/httprouter"
+	"github.com/hzwy23/panda/route"
 )
 
 type a struct {
@@ -29,26 +30,18 @@ func TestNewMiddle(t *testing.T) {
 		fmt.Println("index")
 	})
 
-	handle := Wrap(mux)
-	mid := NewMiddleware(handle, &b{}, &a{})
+	handle := route.Wrap(mux)
+	mid := route.NewMiddleware(handle, &b{}, &a{})
 	http.ListenAndServe(":8080", mid)
 }
 
-func Index(w http.ResponseWriter,r *http.Request, ps httprouter.Params){
-	fmt.Println(ps)
-	fmt.Println(w,r)
-}
-
-func Index2(w http.ResponseWriter,r *http.Request,ps httprouter.Params){
-	fmt.Println(ps)
-}
 
 func TestNewMiddleware(t *testing.T) {
 	mux:=httprouter.New()
 
-	mux.POST("/:name/:bcd",Index)
+	mux.POST("/:name/:bcd",Index2)
 
-	handle := Wrap(mux)
-	mid := NewMiddleware(handle, &b{}, &a{})
+	handle := route.Wrap(mux)
+	mid := route.NewMiddleware(handle, &b{}, &a{})
 	http.ListenAndServe(":8080", mid)
 }

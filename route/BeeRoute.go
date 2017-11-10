@@ -1,5 +1,5 @@
-package router
-// Sorry, This part of the router implementation has been removed
+package route
+// Sorry, This part of the route implementation has been removed
 //
 //import (
 //	"github.com/astaxie/beego"

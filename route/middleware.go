@@ -1,5 +1,5 @@
 // middleware 参考了negroni项目的中间件设计思路
-package router
+package route
 
 import (
 	"net/http"
