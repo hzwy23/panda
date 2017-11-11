@@ -1,3 +1,5 @@
+// Package route 提供http路由相关服务.
+//
 // http路由服务包，主要分为两块：
 // 	1. httprouter，管理路由注册与分发
 // 	2. middleware，管理中间件
