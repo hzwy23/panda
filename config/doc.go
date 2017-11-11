@@ -1,5 +1,8 @@
-// package config 实现了对配置文件的读取和修改操作，
-// 目前支持的配置文件有：INI类型配置文件
+// Package config 实现了对配置文件的读取和修改操作.
+//
+// 目前支持的配置文件有：INI类型配置文件.
+//
+// 示例代码：
 //
 //	 package config_test
 //
@@ -22,4 +25,5 @@
 //		 fmt.Println(c.Get("abc"))
 //		 fmt.Println(c.Get("hello"))
 //	 }
+//
 package config
