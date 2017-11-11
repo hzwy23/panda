@@ -30,7 +30,7 @@ type Config struct {
 // 配置文件在环境变量所指向的目录中，conf目录下
 func NewConfig(file ...string) *Config {
 	fp := DefaultConfigFile
-	if len(file) != 0{
+	if len(file) == 1 {
 		fp = file[0]
 	} else if len(file) > 1{
 		panic("NewConfig最多只能接收一个参数")
