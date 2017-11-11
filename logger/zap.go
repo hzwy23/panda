@@ -1,3 +1,4 @@
+//+build go1.9
 package logger
 
 import (
