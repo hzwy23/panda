@@ -1,6 +1,7 @@
-// json web token
+// Package jwt 提供 json web token 签名字符串生成与解析服务.
 //
 // 示例代码：
+//
 //	package jwt_test
 //
 //	import (
