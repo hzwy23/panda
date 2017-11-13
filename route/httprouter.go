@@ -1,7 +1,7 @@
 package route
 
 import (
-	"github.com/hzwy23/httprouter"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
