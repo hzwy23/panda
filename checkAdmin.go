@@ -1,7 +1,7 @@
 package panda
 
 const (
-	admin string = "admin"
+	admin = "admin"
 )
 
 // 检查是否为超级管理员
