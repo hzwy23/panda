@@ -3,6 +3,7 @@ package route
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"path/filepath"
 )
 
 // 正则路由匹配到的参数列表，
@@ -12,7 +13,7 @@ type Params = httprouter.Params
 
 // NewRouter函数新建一个路由服务实例,
 // 路由服务使用httprouter包实现。
-func NewRouter() *httprouter.Router{
+func NewRouter() *httprouter.Router {
 	return httprouter.New()
 }
 
@@ -22,7 +23,7 @@ var (
 )
 
 // 获取默认路由实例对象
-func GetDefaultRouter() *httprouter.Router {
+func DefaultRouter() *httprouter.Router {
 	return defaultHttprouter
 }
 
@@ -31,34 +32,39 @@ func GetDefaultRouter() *httprouter.Router {
 // method是路由请求方法，
 // path 是路由地址，
 // handler 响应路由的函数。
-func Handler(method, path string, handler http.HandlerFunc){
-	defaultHttprouter.Handler(method,path,handler)
+func Handler(method, path string, handler http.HandlerFunc) {
+	defaultHttprouter.Handler(method, path, handler)
 }
 
 // 向默认路由实例对象中注册路由，路由请求方式是GET，
 // path 是路由地址，
 // handle 是响应路由的服务函数
 func GET(path string, handle httprouter.Handle) {
-	defaultHttprouter.GET(path,handle)
+	defaultHttprouter.GET(path, handle)
 }
 
 // 向默认路由实例对象中注册路由，路由请求方式是POST，
 // path 是路由地址，
 // handle 是响应路由的服务函数
-func POST(path string ,handle httprouter.Handle){
-	defaultHttprouter.POST(path,handle)
+func POST(path string, handle httprouter.Handle) {
+	defaultHttprouter.POST(path, handle)
 }
 
 // 向默认路由实例对象中注册路由，路由请求方式是DELETE，
 // path 是路由地址，
 // handle 是响应路由的服务函数
-func DELETE(path string, handle httprouter.Handle){
-	defaultHttprouter.DELETE(path,handle)
+func DELETE(path string, handle httprouter.Handle) {
+	defaultHttprouter.DELETE(path, handle)
 }
 
 // 向默认路由实例对象中注册路由，路由请求方式是PUT，
 // path 是路由地址，
 // handle 是响应路由的服务函数
-func PUT(path string, handle httprouter.Handle){
-	defaultHttprouter.PUT(path,handle)
+func PUT(path string, handle httprouter.Handle) {
+	defaultHttprouter.PUT(path, handle)
+}
+
+// 设置静态文件路由，如path是/s，root是./static，则static目录下边的静态文件style.css，访问地址是：/s/style.css
+func ServeFiles(path string, root http.FileSystem) {
+	defaultHttprouter.ServeFiles(filepath.Join(path, "*filepath"), root)
 }
