@@ -10,7 +10,6 @@ const (
 	separator = 0x1f
 )
 
-
 // function JoinKey 联合主键拼接，将多个key拼接成一个字符串，默认分隔符是0x1f
 func JoinKey(str ...string) string{
 	size := len(str)
