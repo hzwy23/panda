@@ -3,7 +3,7 @@ package route
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"path/filepath"
+	"path"
 )
 
 // 正则路由匹配到的参数列表，
@@ -65,6 +65,13 @@ func PUT(path string, handle httprouter.Handle) {
 }
 
 // 设置静态文件路由，如path是/s，root是./static，则static目录下边的静态文件style.css，访问地址是：/s/style.css
-func ServeFiles(path string, root http.FileSystem) {
-	defaultHttprouter.ServeFiles(filepath.Join(path, "*filepath"), root)
+func ServeFiles(url string, root http.FileSystem) {
+	defaultHttprouter.ServeFiles(path.Join(url, "*filepath"), root)
+}
+
+func RESTful(path string, c ControllerHandle){
+	Handler("GET",path,c.Get)
+	Handler("POST",path,c.Post)
+	Handler("PUT",path,c.Put)
+	Handler("DELETE",path,c.Delete)
 }
