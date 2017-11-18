@@ -19,5 +19,5 @@ panda中模块简介:
 5. jwt功能
 6. 日期处理功能
 7. 加密操作
-8. 封装beego路由服务
+8. 封装httprouter路由
 9. http web服务
