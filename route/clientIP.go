@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// 获取客户端ip地址
 func RequestIP(r *http.Request) string {
 	ip := r.Header.Get("Remote_addr")
 	if len(ip) == 0 {
