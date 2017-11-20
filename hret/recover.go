@@ -1,13 +1,10 @@
 package hret
 
-import "fmt"
+type recvPanicFunc func()
 
-type httpPanicFunc func()
-
-// HttpPanic user for stop panic up.
-func HttpPanic(f ...httpPanicFunc) {
+// 捕获panic信息，阻止程序因为panic而推出。
+func RecvPanic(f ...recvPanicFunc) {
 	if r := recover(); r != nil {
-		fmt.Println("system generator panic.", r)
 		for _, val := range f {
 			val()
 		}
