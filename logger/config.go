@@ -13,7 +13,7 @@ const (
 	// 则ApplicationBase值为当前程序运行目录。
 	ApplicationBase = "WI_HOME"
 	// 配置文件相对于环境变量WI_HOME的相对路径
-	DefaultConfigFile = "conf/log.conf"
+	DefaultConfigFile = "conf/app.conf"
 )
 
 // 日志文件配置类
