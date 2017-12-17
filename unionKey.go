@@ -17,7 +17,7 @@ func JoinKey(str ...string) string{
 	for i := 0; i < size; i++ {
 		result += str[i]+ string(separator)
 	}
-	return result
+	return strings.TrimSuffix(result, string(separator))
 }
 
 // GetKey从联合主键字符串中获取指定顺序的字符串，
